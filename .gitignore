@@ -96,4 +96,4 @@ Thumbs.db
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+*.sw?*:Zone.Identifier
