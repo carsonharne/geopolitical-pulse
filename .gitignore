@@ -1,0 +1,99 @@
+# ====================================================
+# Geopolitical Supply Chain Pulse - .gitignore
+# ====================================================
+
+# ----------------------------------------------------
+# 1. Security & Secrets (CRITICAL)
+# ----------------------------------------------------
+.env
+.env.*
+!.env.example
+.env.backup
+*.pem
+*.key
+auth.json
+profiles.yml
+dbt.env
+
+# ----------------------------------------------------
+# 2. The Pulse: Ingestion (Python / Polars)
+# ----------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+
+# ----------------------------------------------------
+# 3. The Brain: Warehouse (dbt / Data)
+# ----------------------------------------------------
+warehouse/dbt/target/
+warehouse/dbt/dbt_packages/
+warehouse/dbt/logs/
+
+# Raw data files (Never commit raw GDELT TSVs!)
+*.csv
+*.tsv
+*.parquet
+*.json
+*.sqlite
+
+# EXCEPTION: Allow dbt seed files so your warehouse mapping stays intact
+!warehouse/dbt/seeds/*.csv
+
+# ----------------------------------------------------
+# 4. The Art: Frontend (Laravel)
+# ----------------------------------------------------
+frontend/vendor/
+frontend/node_modules/
+frontend/public/build/
+frontend/public/hot
+frontend/public/storage
+frontend/storage/*.key
+frontend/storage/framework/cache/data/*.php
+frontend/storage/framework/sessions/*
+frontend/storage/framework/testing/*
+frontend/storage/framework/views/*
+frontend/storage/logs/*
+
+# EXCEPTION: Keep the storage directory structures intact for Laravel
+!frontend/storage/logs/.gitignore
+!frontend/storage/framework/cache/data/.gitignore
+!frontend/storage/framework/sessions/.gitignore
+!frontend/storage/framework/testing/.gitignore
+!frontend/storage/framework/views/.gitignore
+frontend/.phpunit.cache
+
+# Node/NPM logs
+npm-debug.log
+yarn-error.log
+
+# ----------------------------------------------------
+# 5. The Engine: Infrastructure (Docker Volumes)
+# ----------------------------------------------------
+# Ignore local data volumes mounted by docker-compose
+infrastructure/data/
+infrastructure/postgres-data/
+infrastructure/redpanda-data/
+infrastructure/pgadmin-data/
+*.log
+
+# ----------------------------------------------------
+# 6. OS & IDE Configurations
+# ----------------------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

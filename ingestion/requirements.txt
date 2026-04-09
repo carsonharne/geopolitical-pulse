@@ -1,0 +1,4 @@
+# ingestion/requirements.txt
+httpx
+polars
+confluent-kafka
