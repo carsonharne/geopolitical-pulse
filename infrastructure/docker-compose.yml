@@ -1,0 +1,76 @@
+version: '3.7'
+
+networks:
+  pulse_network:
+    driver: bridge
+
+volumes:
+  redpanda-data:
+  postgres-data:
+  pgadmin-data:
+
+services:
+  # ----------------------------------------------------
+  # 1. The Streaming Engine: Redpanda
+  # ----------------------------------------------------
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
+    container_name: pulse-redpanda
+    command:
+      - redpanda
+      - start
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --overprovisioned
+      - --node-id 0
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      # Route traffic properly whether inside the Docker network or on your host
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+    ports:
+      - "19092:19092" # External Kafka API (for your Python script)
+      - "9092:9092"   # Internal Kafka API 
+      - "9644:9644"   # Admin API
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    networks:
+      - pulse_network
+
+  # ----------------------------------------------------
+  # 2. The Data Warehouse: PostgreSQL 15
+  # ----------------------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    container_name: pulse-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: pulse_password_123
+      POSTGRES_DB: geopolitical_pulse
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # This binds our local SQL folder so Postgres runs any initial scripts automatically
+      - ../warehouse/sql:/docker-entrypoint-initdb.d
+    networks:
+      - pulse_network
+
+  # ----------------------------------------------------
+  # 3. The Warehouse UI: pgAdmin
+  # ----------------------------------------------------
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pulse-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pulse.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - pulse_network
+    depends_on:
+      - postgres
