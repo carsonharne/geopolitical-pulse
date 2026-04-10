@@ -1,4 +1,4 @@
-# Project Blueprint: The Geopolitical Supply Chain Pulse
+# Geopolitical Pulse
 
 An enterprise-grade data engineering pipeline designed to monitor and visualize Chinese economic volatility and supply chain disruption in real-time.
 
